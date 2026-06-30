@@ -20,7 +20,8 @@ func (r *RankingRepo) Create(ranking *model.Ranking) error {
 
 func (r *RankingRepo) FindByID(id uuid.UUID) (*model.Ranking, error) {
 	var ranking model.Ranking
-	err := r.db.Preload("Entries", "deleted_at IS NULL").Where("id = ? AND deleted_at IS NULL", id).First(&ranking).Error
+	err := r.db.Preload("Entries", "deleted_at IS NULL").Preload("User").
+		Where("id = ? AND deleted_at IS NULL", id).First(&ranking).Error
 	if err != nil {
 		return nil, err
 	}
@@ -29,7 +30,7 @@ func (r *RankingRepo) FindByID(id uuid.UUID) (*model.Ranking, error) {
 
 func (r *RankingRepo) FindByShareCode(code string) (*model.Ranking, error) {
 	var ranking model.Ranking
-	err := r.db.Preload("Entries", "deleted_at IS NULL AND tier IS NOT NULL").
+	err := r.db.Preload("Entries", "deleted_at IS NULL").Preload("User").
 		Where("share_code = ? AND deleted_at IS NULL", code).First(&ranking).Error
 	if err != nil {
 		return nil, err
@@ -44,7 +45,7 @@ func (r *RankingRepo) FindByUserID(userID uuid.UUID, offset, limit int) ([]model
 	query := r.db.Model(&model.Ranking{}).Where("user_id = ? AND deleted_at IS NULL", userID)
 	query.Count(&total)
 
-	err := query.Order("updated_at DESC").Offset(offset).Limit(limit).Find(&rankings).Error
+	err := query.Preload("Entries", "deleted_at IS NULL").Order("updated_at DESC").Offset(offset).Limit(limit).Find(&rankings).Error
 	return rankings, total, err
 }
 
@@ -61,7 +62,7 @@ func (r *RankingRepo) FindPublic(offset, limit int, category string, keyword str
 	}
 
 	query.Count(&total)
-	err := query.Order("updated_at DESC").Offset(offset).Limit(limit).Find(&rankings).Error
+	err := query.Preload("Entries", "deleted_at IS NULL").Order("updated_at DESC").Offset(offset).Limit(limit).Find(&rankings).Error
 	return rankings, total, err
 }
 

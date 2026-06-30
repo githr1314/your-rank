@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/yourrank/backend/internal/middleware"
+	"github.com/yourrank/backend/internal/model"
 	"github.com/yourrank/backend/internal/repository"
 	"github.com/yourrank/backend/internal/service"
 	"github.com/yourrank/backend/pkg/response"
@@ -30,6 +32,50 @@ type createRankingRequest struct {
 	Visibility  string `json:"visibility"`
 }
 
+// rankingCardResponse 排行榜卡片响应（包含 entry_count 和 tier_summary）
+type rankingCardResponse struct {
+	ID          uuid.UUID      `json:"id"`
+	UserID      uuid.UUID      `json:"user_id"`
+	Title       string         `json:"title"`
+	Description string         `json:"description"`
+	CoverURL    string         `json:"cover_url"`
+	Category    string         `json:"category"`
+	Visibility  string         `json:"visibility"`
+	ShareCode   string         `json:"share_code"`
+	ViewCount   int            `json:"view_count"`
+	EntryCount  int            `json:"entry_count"`
+	TierSummary map[string]int `json:"tier_summary"`
+	CreatedAt   time.Time      `json:"created_at"`
+	UpdatedAt   time.Time      `json:"updated_at"`
+	User        *model.User    `json:"user,omitempty"`
+}
+
+// toRankingCard 将 model.Ranking 转换为卡片响应
+func toRankingCard(r *model.Ranking) rankingCardResponse {
+	tierSummary := map[string]int{"S": 0, "A": 0, "B": 0, "C": 0, "D": 0}
+	for _, e := range r.Entries {
+		if e.Tier != nil {
+			tierSummary[*e.Tier]++
+		}
+	}
+	return rankingCardResponse{
+		ID:          r.ID,
+		UserID:      r.UserID,
+		Title:       r.Title,
+		Description: r.Description,
+		CoverURL:    r.CoverURL,
+		Category:    r.Category,
+		Visibility:  r.Visibility,
+		ShareCode:   r.ShareCode,
+		ViewCount:   r.ViewCount,
+		EntryCount:  len(r.Entries),
+		TierSummary: tierSummary,
+		CreatedAt:   r.CreatedAt,
+		UpdatedAt:   r.UpdatedAt,
+		User:        r.User,
+	}
+}
+
 // Create 创建排行榜
 func (h *RankingHandler) Create(w http.ResponseWriter, r *http.Request) {
 	userID, _ := middleware.GetUserID(r)
@@ -49,7 +95,7 @@ func (h *RankingHandler) Create(w http.ResponseWriter, r *http.Request) {
 	response.Created(w, ranking)
 }
 
-// Get 获取排行榜详情
+// Get 获取排行榜详情（含可见性权限校验）
 func (h *RankingHandler) Get(w http.ResponseWriter, r *http.Request) {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
 	if err != nil {
@@ -57,7 +103,9 @@ func (h *RankingHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ranking, err := h.rankingService.GetRanking(id)
+	userID, _ := middleware.GetUserID(r)
+
+	ranking, err := h.rankingService.GetRanking(id, userID)
 	if err != nil {
 		response.NotFound(w, err.Error())
 		return
@@ -122,8 +170,13 @@ func (h *RankingHandler) ListMy(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cards := make([]rankingCardResponse, len(rankings))
+	for i, rank := range rankings {
+		cards[i] = toRankingCard(&rank)
+	}
+
 	response.Success(w, map[string]interface{}{
-		"items": rankings,
+		"items": cards,
 		"total": total,
 	})
 }
@@ -144,8 +197,13 @@ func (h *RankingHandler) ListPublic(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cards := make([]rankingCardResponse, len(rankings))
+	for i, rank := range rankings {
+		cards[i] = toRankingCard(&rank)
+	}
+
 	response.Success(w, map[string]interface{}{
-		"items": rankings,
+		"items": cards,
 		"total": total,
 	})
 }

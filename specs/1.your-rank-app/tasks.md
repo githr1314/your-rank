@@ -18,7 +18,7 @@
 
 ### 补全缺失接口
 
-- [ ] T-BE-001: 实现 `POST /api/v1/auth/send-verify-code` 接口 ~30min
+- [x] T-BE-001: 实现 `POST /api/v1/auth/send-verify-code` 接口 ~30min
   - 输入: `{ email }`
   - 逻辑: 生成 6 位随机数字验证码，存储到 users 表 verify_code + verify_code_expire（有效期 10 分钟），通过 SMTP 发送到邮箱
   - 约束: 同一邮箱 1 小时内最多发送 3 次，验证码错误超 5 次自动作废
@@ -26,7 +26,7 @@
 
 ### 已有接口验证
 
-- [ ] T-BE-002: 已有接口全面验证与前端对齐 ~1h
+- [x] T-BE-002: 已有接口全面验证与前端对齐 ~1h
   - 逐接口验证请求/响应格式与 `api-contract.yaml` 一致
   - 重点验证: 分页返回 `{ items, total }` 格式、条目 tier 字段支持 null、分享码 8 位固定长度
   - 修复注册接口缺少验证码校验逻辑的问题（当前 handler 直接注册，未校验 verify_code）
@@ -36,7 +36,7 @@
 
 ### 项目初始化 & 基础设施
 
-- [ ] T-FE-001: 前端项目初始化 ~1h
+- [x] T-FE-001: 前端项目初始化 ~1h
   - 使用 Vite 5 创建 React 18 + TypeScript 项目
   - 安装依赖: react-router-dom v6, axios, @dnd-kit/core, @dnd-kit/sortable, tailwindcss 3, tailwind-merge, tailwindcss-animate, Radix UI (Avatar/Dialog/DropdownMenu/Label/Separator/Slot/Tabs/Tooltip), react-hot-toast, qrcode, html2canvas
   - 配置 Tailwind 主题色（Tier S/A/B/C/D 色、Luminous Precision 中性色、玻璃态背景）
@@ -46,7 +46,7 @@
 
 ### 公共组件 & 鉴权
 
-- [ ] T-FE-002: 公共组件开发 ~1h
+- [x] T-FE-002: 公共组件开发 ~1h
   - `Navbar`: Logo + 导航链接 (发现/我的排行) + 用户头像下拉菜单 (个人中心/退出登录) + 玻璃态毛玻璃效果
   - `AuthContext` + `useAuth`: 基于 localStorage JWT token + `auth-change` 自定义事件
   - `AuthGuard`: 路由鉴权守卫组件，未登录重定向到 `/login`
@@ -57,7 +57,7 @@
 
 ### API 服务层
 
-- [ ] T-FE-003: API 服务层封装 ~30min
+- [x] T-FE-003: API 服务层封装 ~30min
   - `services/authAPI.ts`: register, login, sendVerifyCode
   - `services/rankingAPI.ts`: listPublic, listMy, getById, create, update, delete
   - `services/entryAPI.ts`: create, update, delete, reorder
@@ -68,23 +68,23 @@
 
 ### 页面开发
 
-- [ ] T-FE-004: 登录 & 注册页面 ~1h
+- [x] T-FE-004: 登录 & 注册页面 ~1h
   - `LoginPage`: 邮箱/用户名切换 + 密码输入 + "记住我"复选框 + 登录按钮 → 成功后跳转 `/home`
   - `RegisterPage`: 用户名 + 邮箱 + 密码 + 验证码输入 + "发送验证码"按钮（60s 倒计时）+ 注册按钮 → 成功后自动登录
   - 表单校验: 用户名 2-20 字符、邮箱格式、密码 8-32 字符含字母+数字
 
-- [ ] T-FE-005: 发现页 ~1h
+- [x] T-FE-005: 发现页 ~1h
   - `DiscoverPage`: 顶部搜索栏（关键词搜索）+ 分类标签筛选行（全部/游戏/影视/音乐/美食/运动/科技/其他）
   - `RankingCardGrid`: 四列卡片网格，每张卡片展示封面缩略图、标题、条目总数、等级分布概览、浏览热度
   - 无限滚动: IntersectionObserver 检测底部，自动加载下一页（分页 20 条/页）
   - 空状态: 搜索无结果时展示引导提示
 
-- [ ] T-FE-006: 我的排行榜页 + 创建排行榜页 ~1h
+- [x] T-FE-006: 我的排行榜页 + 创建排行榜页 ~1h
   - `MyRankingsPage`: 卡片网格展示我的排行（与发现页结构一致，增加"创建新排行"入口卡片），支持分类筛选和排序（创建时间/更新时间）
   - `CreateRankingPage`: 标题（必填 1-100 字符）+ 描述（选填）+ 封面图上传 + 分类标签选择（下拉）+ 可见范围（公开/私密/仅链接 单选），创建成功后跳转管理页
   - 删除排行榜: 点击删除 → ConfirmDialog 二次确认 → 输入标题确认 → 删除成功回调列表
 
-- [ ] T-FE-007: 排行管理页（核心拖拽页面） ~3h
+- [x] T-FE-007: 排行管理页（核心拖拽页面） ~3h
   - **布局硬约束**: 页面 `h-screen overflow-hidden`，无纵向滚动条
   - `TopBar`: ← 返回按钮 + 面包屑导航 (我的排行 > 排行标题) + 分享按钮 + 更多菜单 (删除排行)
   - `RankingInfoBar`: 标题输入框 + 分类选择 + 可见范围切换（可折叠/展开）
@@ -103,19 +103,19 @@
   - **保存策略**: 拖拽释放后 800ms 防抖调用 `PUT /entries/reorder`，保存中底部状态栏显示"保存中..."，成功后"✓ 已保存" 2s 淡出，失败回滚并提示
   - **未保存保护**: `beforeunload` + `useBlocker` 拦截，弹出确认提示"未保存变更"
 
-- [ ] T-FE-008: 排行详情页（只读） + 分享页 ~1h
+- [x] T-FE-008: 排行详情页（只读） + 分享页 ~1h
   - `RankingDetailPage`: 完整展示 Tier List（只读），根据 visibility 校验访问权限
   - `SharePage (/s/:code)`: 通过分享码调用 `GET /share/{code}` 获取数据，纯展示 Tier List 全貌
     - 底部: 创建者信息 + "由 Your Rank 生成" + "自己也来创建一个 →" CTA 入口
     - 分享海报生成: qrcode 生成分享链接二维码 + html2canvas 合成封面+标题+完整 Tier List 截图+二维码的长图
 
-- [ ] T-FE-009: 个人中心页 ~45min
+- [x] T-FE-009: 个人中心页 ~45min
   - `ProfilePage`: 头像编辑（上传+裁剪）+ 昵称/简介编辑 + 修改密码（旧密码+新密码表单）+ 注销账号按钮
   - 注销账号: ConfirmDialog 二次确认 → 确认后调用 `DELETE /profile` → 清除登录态 → 跳转首页
 
 ### 前端测试
 
-- [ ] T-FE-010: 核心交互测试 ~30min
+- [x] T-FE-010: 核心交互测试 ~30min
   - 拖拽交互: 跨行拖拽等级变更、行内排序、拖入待放置区、拖入删除区
   - 保存防抖: 800ms 防抖行为验证
   - 未保存保护: 页面关闭/跳转拦截
@@ -123,7 +123,7 @@
 
 ## 联调 & 集成
 
-- [ ] T-INT-001: 前后端联调 ~1h
+- [x] T-INT-001: 前后端联调 ~1h
   - 逐接口从前端发起请求 → 检查后端响应格式与 api-contract.yaml 一致
   - 重点: 注册/登录 JWT 流程、条目 reorder 批量更新、分享码访问
   - 修复联调中发现的格式不一致问题

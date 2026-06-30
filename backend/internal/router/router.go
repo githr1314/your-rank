@@ -33,7 +33,7 @@ func Setup(db *gorm.DB, cfg *config.Config) http.Handler {
 	rankingRepo := repository.NewRankingRepo(db)
 	entryRepo := repository.NewEntryRepo(db)
 
-	authService := service.NewAuthService(userRepo, cfg)
+	authService := service.NewAuthService(userRepo, cfg, db)
 	rankingService := service.NewRankingService(rankingRepo, entryRepo)
 	entryService := service.NewEntryService(entryRepo, rankingRepo)
 	uploadService := service.NewUploadService(db, cfg)
@@ -56,6 +56,7 @@ func Setup(db *gorm.DB, cfg *config.Config) http.Handler {
 		r.Group(func(r chi.Router) {
 			r.With(strictLimiter.Limit).Post("/auth/register", authHandler.Register)
 			r.Post("/auth/login", authHandler.Login)
+			r.Post("/auth/send-verify-code", authHandler.SendVerifyCode)
 			r.Get("/rankings/public", rankingHandler.ListPublic)
 			r.Get("/share/{code}", rankingHandler.GetByShareCode)
 		})

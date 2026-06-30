@@ -45,12 +45,13 @@ func (h *ProfileHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	response.Success(w, map[string]interface{}{
-		"id":         user.ID,
-		"username":   user.Username,
-		"email":      user.Email,
-		"nickname":   user.Nickname,
-		"bio":        user.Bio,
-		"avatar_url": user.AvatarURL,
+		"id":            user.ID,
+		"username":      user.Username,
+		"email":         user.Email,
+		"nickname":      user.Nickname,
+		"bio":           user.Bio,
+		"avatar_url":    user.AvatarURL,
+		"last_login_at": user.LastLoginAt,
 	})
 }
 

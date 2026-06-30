@@ -17,15 +17,20 @@ func NewAuthHandler(authService *service.AuthService) *AuthHandler {
 }
 
 type registerRequest struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Username   string `json:"username"`
+	Email      string `json:"email"`
+	Password   string `json:"password"`
+	VerifyCode string `json:"verify_code"`
 }
 
 type loginRequest struct {
 	Account    string `json:"account"`
 	Password   string `json:"password"`
 	RememberMe bool   `json:"remember_me"`
+}
+
+type sendVerifyCodeRequest struct {
+	Email string `json:"email"`
 }
 
 // Register 用户注册（注册即登录，返回 JWT token）
@@ -36,7 +41,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, user, err := h.authService.Register(req.Username, req.Email, req.Password)
+	token, user, err := h.authService.Register(req.Username, req.Email, req.Password, req.VerifyCode)
 	if err != nil {
 		response.BadRequest(w, err.Error())
 		return
@@ -87,4 +92,26 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 			"last_login_at": user.LastLoginAt,
 		},
 	})
+}
+
+// SendVerifyCode 发送邮箱验证码
+func (h *AuthHandler) SendVerifyCode(w http.ResponseWriter, r *http.Request) {
+	var req sendVerifyCodeRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		response.BadRequest(w, "请求格式错误")
+		return
+	}
+
+	if req.Email == "" {
+		response.BadRequest(w, "邮箱不能为空")
+		return
+	}
+
+	data, err := h.authService.SendVerifyCode(req.Email)
+	if err != nil {
+		response.BadRequest(w, err.Error())
+		return
+	}
+
+	response.Success(w, data)
 }

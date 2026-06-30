@@ -117,10 +117,14 @@ func (s *RankingService) DeleteRanking(id, userID uuid.UUID) error {
 	return s.rankingRepo.SoftDelete(id)
 }
 
-// GetRanking 获取排行榜详情
-func (s *RankingService) GetRanking(id uuid.UUID) (*model.Ranking, error) {
+// GetRanking 获取排行榜详情（含可见性权限校验）
+func (s *RankingService) GetRanking(id uuid.UUID, userID uuid.UUID) (*model.Ranking, error) {
 	ranking, err := s.rankingRepo.FindByID(id)
 	if err != nil {
+		return nil, errors.New("排行榜不存在")
+	}
+	// 可见性校验：私密排行仅创建者可查看
+	if ranking.Visibility == "私密" && ranking.UserID != userID {
 		return nil, errors.New("排行榜不存在")
 	}
 	// 异步增加浏览量（忽略错误）
