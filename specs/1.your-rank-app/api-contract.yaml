@@ -1,0 +1,914 @@
+openapi: "3.0.3"
+info:
+  title: "Your Rank API"
+  version: "1.0.0"
+  description: "Your Rank — Tier List 排行榜系统 API 契约。前后端唯一真相源。"
+
+servers:
+  - url: "http://localhost:8080/api/v1"
+    description: 本地开发（后端直连）
+  - url: "http://localhost:3000/api/v1"
+    description: 本地开发（前端 Vite proxy → 后端）
+
+tags:
+  - name: Auth
+    description: 认证接口（注册、登录、验证码）
+  - name: Rankings
+    description: 排行榜 CRUD
+  - name: Entries
+    description: 条目 CRUD 与排序
+  - name: Upload
+    description: 图片上传
+  - name: Profile
+    description: 个人资料管理
+  - name: Share
+    description: 分享访问
+
+# ─── Security ───────────────────────────────────────────
+
+security:
+  - bearerAuth: []
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "JWT HS256 token，从 /auth/login 或 /auth/register 获取"
+
+# ─── Schemas ────────────────────────────────────────────
+
+  schemas:
+
+    # ── 通用 ──
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        code:
+          type: integer
+
+    SuccessMessage:
+      type: object
+      properties:
+        message:
+          type: string
+
+    PaginatedResponse:
+      type: object
+      properties:
+        items:
+          type: array
+        total:
+          type: integer
+
+    # ── 用户 ──
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        nickname:
+          type: string
+        avatar_url:
+          type: string
+        bio:
+          type: string
+        last_login_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    # ── Auth ──
+    RegisterRequest:
+      type: object
+      required: [username, email, password]
+      properties:
+        username:
+          type: string
+          minLength: 2
+          maxLength: 20
+          description: 仅限中英文、数字、下划线
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+          maxLength: 32
+          description: 至少包含字母+数字
+
+    LoginRequest:
+      type: object
+      required: [account, password]
+      properties:
+        account:
+          type: string
+          description: 邮箱或用户名
+        password:
+          type: string
+        remember_me:
+          type: boolean
+          default: false
+          description: true=7天有效期, false=2小时有效期
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT Bearer Token
+        user:
+          $ref: "#/components/schemas/UserProfile"
+
+    SendVerifyCodeRequest:
+      type: object
+      required: [email]
+      properties:
+        email:
+          type: string
+          format: email
+
+    SendVerifyCodeResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        expires_in:
+          type: integer
+          description: 验证码有效期（秒），默认 600
+
+    # ── Ranking ──
+    RankingCreateRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 100
+        description:
+          type: string
+        cover_url:
+          type: string
+          description: 封面上传后返回的 URL
+        category:
+          type: string
+          enum: [游戏, 影视, 音乐, 美食, 运动, 科技, 其他]
+          default: 其他
+        visibility:
+          type: string
+          enum: [公开, 私密, 仅链接]
+          default: 公开
+
+    RankingResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        cover_url:
+          type: string
+        category:
+          type: string
+        visibility:
+          type: string
+        share_code:
+          type: string
+          minLength: 8
+          maxLength: 8
+        view_count:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/EntryResponse"
+        user:
+          $ref: "#/components/schemas/UserProfile"
+
+    RankingCardResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        cover_url:
+          type: string
+        category:
+          type: string
+        visibility:
+          type: string
+        share_code:
+          type: string
+        view_count:
+          type: integer
+        entry_count:
+          type: integer
+          description: 条目总数
+        tier_summary:
+          type: object
+          description: 各等级条目数量 { S: 2, A: 3, B: 4, C: 1, D: 0 }
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        user:
+          $ref: "#/components/schemas/UserProfile"
+
+    # ── Entry ──
+    EntryCreateRequest:
+      type: object
+      required: [ranking_id, name]
+      properties:
+        ranking_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        description:
+          type: string
+        image_url:
+          type: string
+          description: 配图上传后返回的 URL
+        link_url:
+          type: string
+          description: 外部详情链接
+
+    EntryResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        ranking_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        description:
+          type: string
+        image_url:
+          type: string
+        link_url:
+          type: string
+        tier:
+          type: string
+          nullable: true
+          enum: [S, A, B, C, D, null]
+          description: "S/A/B/C/D=等级, null=待放置区"
+        sort_order:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    # ── Reorder ──
+    ReorderRequest:
+      type: object
+      required: [updates]
+      properties:
+        updates:
+          type: array
+          items:
+            type: object
+            required: [id, sort_order]
+            properties:
+              id:
+                type: string
+                format: uuid
+              tier:
+                type: string
+                nullable: true
+                enum: [S, A, B, C, D, null]
+              sort_order:
+                type: integer
+
+    # ── Upload ──
+    UploadResponse:
+      type: object
+      properties:
+        url:
+          type: string
+          description: 原图访问 URL
+        thumb_s_url:
+          type: string
+          description: 小缩略图 URL (200px)
+        thumb_m_url:
+          type: string
+          description: 中等缩略图 URL (800px)
+        file_name:
+          type: string
+        file_size:
+          type: integer
+        mime_type:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer
+
+    # ── Profile ──
+    ProfileUpdateRequest:
+      type: object
+      properties:
+        nickname:
+          type: string
+          maxLength: 50
+        bio:
+          type: string
+          maxLength: 500
+        avatar_url:
+          type: string
+          maxLength: 500
+
+    PasswordUpdateRequest:
+      type: object
+      required: [old_password, new_password]
+      properties:
+        old_password:
+          type: string
+        new_password:
+          type: string
+          minLength: 8
+          maxLength: 32
+
+    DeleteAccountRequest:
+      type: object
+      required: [confirm]
+      properties:
+        confirm:
+          type: boolean
+          description: 必须为 true
+
+# ─── Paths ─────────────────────────────────────────────
+
+paths:
+
+  # ═══ Auth ═══
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: 用户注册
+      description: 注册成功后自动登录，返回 JWT token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: 注册成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: 参数错误（用户名已存在/邮箱已注册/格式不合法）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: 用户登录
+      description: 支持邮箱或用户名登录，记住我区分 2h/7d 有效期
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: 登录成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: 账号或密码错误 / 账号已锁定
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/send-verify-code:
+    post:
+      tags: [Auth]
+      summary: 发送邮箱验证码
+      description: 发送 6 位数字验证码到注册邮箱，有效期 10 分钟。同一邮箱 1 小时内最多发送 3 次。
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendVerifyCodeRequest"
+      responses:
+        "200":
+          description: 验证码已发送
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SendVerifyCodeResponse"
+        "400":
+          description: 发送频率超限 / 邮箱格式错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ═══ Rankings ═══
+
+  /rankings/public:
+    get:
+      tags: [Rankings]
+      summary: 公开排行榜列表（发现页）
+      description: 分页查询公开排行榜，支持分类筛选和关键词搜索
+      security: []
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 50
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [游戏, 影视, 音乐, 美食, 运动, 科技, 其他]
+        - name: keyword
+          in: query
+          schema:
+            type: string
+          description: 搜索排行标题关键词
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/RankingCardResponse"
+
+  /rankings:
+    post:
+      tags: [Rankings]
+      summary: 创建排行榜
+      description: 创建成功自动生成 8 位分享码
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RankingCreateRequest"
+      responses:
+        "201":
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankingResponse"
+        "400":
+          description: 参数错误（标题为空/字数超限）
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /rankings/mine:
+    get:
+      tags: [Rankings]
+      summary: 我的排行榜列表
+      parameters:
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 50
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/PaginatedResponse"
+                  - properties:
+                      items:
+                        type: array
+                        items:
+                          $ref: "#/components/schemas/RankingCardResponse"
+
+  /rankings/{id}:
+    get:
+      tags: [Rankings]
+      summary: 排行榜详情
+      description: 获取单个排行榜完整信息，含所有条目
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankingResponse"
+        "404":
+          description: 不存在
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      tags: [Rankings]
+      summary: 更新排行榜
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RankingCreateRequest"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankingResponse"
+        "400":
+          description: 无权限 / 参数错误
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Rankings]
+      summary: 删除排行榜
+      description: 级联删除所有条目及关联图片，不可恢复
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: 已删除
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: 无权限
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ═══ Entries ═══
+
+  /entries:
+    post:
+      tags: [Entries]
+      summary: 创建条目
+      description: 新条目标记为待放置（tier=null），展示在待放置区
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryCreateRequest"
+      responses:
+        "201":
+          description: 创建成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        "400":
+          description: 参数错误 / 排行榜条目已达上限 / 无权限
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /entries/{id}:
+    put:
+      tags: [Entries]
+      summary: 更新条目
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EntryCreateRequest"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryResponse"
+        "400":
+          description: 参数错误 / 无权限
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Entries]
+      summary: 删除条目
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: 已删除
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+
+  /entries/reorder:
+    put:
+      tags: [Entries]
+      summary: 批量排序（拖拽保存）
+      description: 拖拽释放后 800ms 防抖调用，传入变更的条目 tier 和 sort_order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReorderRequest"
+      responses:
+        "200":
+          description: 已保存
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: 参数错误 / 条目不属于当前用户
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ═══ Upload ═══
+
+  /upload:
+    post:
+      tags: [Upload]
+      summary: 上传单张图片
+      description: 自动生成 200px 和 800px 两个缩略图。限制 10MB。
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: 图片文件 (jpg/jpeg/png/gif/webp, ≤10MB)
+      responses:
+        "201":
+          description: 上传成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadResponse"
+        "400":
+          description: 文件过大/格式不支持/频率超限
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /upload/batch:
+    post:
+      tags: [Upload]
+      summary: 批量上传图片
+      description: 最多 9 张，每张自动生成缩略图
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [files]
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 图片文件数组 (最多 9 张)
+      responses:
+        "201":
+          description: 上传成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UploadResponse"
+        "400":
+          description: 文件过大/数量超限/格式不支持
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ═══ Profile ═══
+
+  /profile:
+    put:
+      tags: [Profile]
+      summary: 更新个人资料
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProfileUpdateRequest"
+      responses:
+        "200":
+          description: 更新成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "400":
+          description: 参数不合法
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags: [Profile]
+      summary: 注销账号
+      description: 二次确认，可选择是否一并删除排行数据
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteAccountRequest"
+      responses:
+        "200":
+          description: 账号已注销
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: 未确认
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /profile/password:
+    put:
+      tags: [Profile]
+      summary: 修改密码
+      description: 需先验证旧密码
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PasswordUpdateRequest"
+      responses:
+        "200":
+          description: 密码修改成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessMessage"
+        "400":
+          description: 旧密码错误 / 新密码不合法
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  # ═══ Share ═══
+
+  /share/{code}:
+    get:
+      tags: [Share]
+      summary: 通过分享码获取排行
+      description: 8 位分享码，返回完整排行含条目。仅公开和仅链接可见的排行榜可通过此接口访问。
+      security: []
+      parameters:
+        - name: code
+          in: path
+          required: true
+          schema:
+            type: string
+            minLength: 8
+            maxLength: 8
+      responses:
+        "200":
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RankingResponse"
+        "400":
+          description: 无效的分享码
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: 不存在或不可访问
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
