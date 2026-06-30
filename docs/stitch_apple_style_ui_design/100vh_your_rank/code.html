@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tier List Management</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1c1c",
+                        "outline-variant": "#c1c6d7",
+                        "surface": "#f9f9f9",
+                        "secondary-container": "#dfdfe1",
+                        "on-tertiary-fixed": "#1a1b1f",
+                        "surface-variant": "#e2e2e2",
+                        "tier-d-soft-gray": "#AEAEB2",
+                        "error-container": "#ffdad6",
+                        "tier-c-graphite": "#48484A",
+                        "on-tertiary-container": "#fefcff",
+                        "border-light": "rgba(0, 0, 0, 0.08)",
+                        "surface-tint": "#005bc1",
+                        "on-surface-variant": "#414755",
+                        "on-secondary-fixed-variant": "#454749",
+                        "primary-container": "#0070eb",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-container": "#eeeeee",
+                        "on-primary-container": "#fefcff",
+                        "background": "#f9f9f9",
+                        "tertiary-container": "#747479",
+                        "tier-s-gradient": "linear-gradient(135deg, #FFD700 0%, #FF9500 100%)",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary": "#5d5e60",
+                        "primary": "#0058bc",
+                        "outline": "#717786",
+                        "inverse-surface": "#2f3131",
+                        "tertiary-fixed-dim": "#c6c6cb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e3e2e7",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-fixed-variant": "#46464b",
+                        "error": "#ba1a1a",
+                        "background-secondary": "#F5F5F7",
+                        "surface-container-highest": "#e2e2e2",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface-dim": "#dadada",
+                        "tertiary": "#5b5c60",
+                        "primary-fixed-dim": "#adc6ff",
+                        "tier-a-crimson": "#FF3B30",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#c6c6c8",
+                        "on-secondary-fixed": "#1a1c1d",
+                        "secondary-fixed": "#e2e2e4",
+                        "on-surface": "#1a1c1c",
+                        "tier-b-electric-purple": "#AF52DE",
+                        "on-secondary-container": "#616365",
+                        "inverse-primary": "#adc6ff",
+                        "on-error": "#ffffff",
+                        "glass-bg": "rgba(255, 255, 255, 0.72)",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#001a41",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#004493"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-md": "16px",
+                        "stack-gap": "12px",
+                        "info-area-height": "80px",
+                        "status-bar-height": "32px",
+                        "margin-edge": "24px",
+                        "top-bar-height": "56px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "tier-marker": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "25px", "fontWeight": "600" }],
+                        "tier-marker": ["28px", { "lineHeight": "34px", "letterSpacing": "0.05em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["17px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["34px", { "lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Hide scrollbar for clean UI but allow functionality */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        /* Subtle ambient animation for the background */
+        @keyframes float-ambient {
+            0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.3; }
+            50% { transform: translate(2%, 2%) scale(1.05); opacity: 0.5; }
+        }
+        .ambient-blob {
+            animation: float-ambient 15s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col bg-background text-on-background font-body-md relative select-none">
+<!-- Ambient Background Layer -->
+<div class="absolute inset-0 pointer-events-none overflow-hidden z-0">
+<div class="absolute -top-[20%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-primary-fixed-dim blur-[100px] ambient-blob mix-blend-multiply"></div>
+<div class="absolute top-[60%] -right-[10%] w-[40vw] h-[40vw] rounded-full bg-error-container blur-[100px] ambient-blob mix-blend-multiply" style="animation-delay: -5s;"></div>
+</div>
+<!-- Top Navigation Bar (Adapted for Focused Task based on JSON TopNavBar styles) -->
+<header class="h-top-bar-height flex-shrink-0 bg-glass-bg backdrop-blur-md border-b border-light flex justify-between items-center px-margin-edge z-50 relative">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors text-on-surface-variant group">
+<span class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
+</button>
+<h1 class="text-headline-md font-headline-md text-on-surface tracking-tight truncate max-w-[200px] md:max-w-md">
+                2024年度游戏
+            </h1>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors">
+<span class="material-symbols-outlined text-[20px]">ios_share</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</header>
+<!-- Info Section (Collapsible Look) -->
+<section class="h-info-area-height flex-shrink-0 flex items-center justify-between px-margin-edge border-b border-light/50 relative z-40 bg-surface/50 backdrop-blur-sm">
+<div class="flex flex-col justify-center">
+<div class="flex items-center gap-2">
+<h2 class="text-body-lg font-body-lg font-semibold text-on-surface">Game of the Year Rankings</h2>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider bg-surface-container-high border border-border-light text-on-surface-variant uppercase">Gaming</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">public</span> Public Visibility
+            </p>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-surface-variant/50 transition-colors text-on-surface-variant">
+<span class="material-symbols-outlined">expand_less</span>
+</button>
+</section>
+<!-- Main Workspace (Core Drag Area - 6 Rows) -->
+<main class="flex-1 flex flex-col gap-stack-gap p-margin-edge overflow-hidden relative z-30">
+<!-- Tier S -->
+<div class="flex-[1_1_13%] flex flex-row items-stretch bg-glass-bg backdrop-blur-sm rounded-lg border border-border-light overflow-hidden shadow-sm group">
+<div class="w-16 md:w-24 flex-shrink-0 flex flex-col items-center justify-center font-tier-marker text-tier-marker text-on-primary shadow-[inset_-1px_0_0_rgba(0,0,0,0.1)] relative overflow-hidden" style="background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);">
+<span class="z-10 relative">S</span>
+<span class="text-[10px] md:text-label-sm font-label-sm font-medium tracking-normal mt-1 z-10 relative opacity-90">神中神</span>
+<!-- Subtle inner glow -->
+<div class="absolute inset-0 bg-white/20 blur-md rounded-full transform scale-150 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+</div>
+<div class="flex-1 flex flex-row items-center gap-3 px-3 py-2 overflow-x-auto overflow-y-hidden no-scrollbar bg-tier-s-gradient/5">
+<!-- Item Card -->
+<div class="h-full aspect-square flex-shrink-0 relative rounded-md overflow-hidden bg-surface-container-highest cursor-grab hover:scale-105 hover:shadow-[0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-200 group/card border border-border-light/50">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A highly detailed cinematic shot of a mystical glowing sword resting on an ancient stone pedestal in a lush, overgrown ruined temple. Light mode aesthetic, bright sunbeams filtering through the foliage. Vibrant greens, golden light, and deep shadowed crevices. Fantasy RPG concept art style, 8k resolution, hyper-realistic textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCPIZfVDDimK5H96_tpg43WR9jL6atvdK4C2w2apUA3nTSKKaUfBhwDygfgizVD4oitpOxRE1MztfaY9-Ha54HiVykwpyE8C-ArRCO6Ffj3MYJQwgVXf0-IqRg7uSEyjKY2yPI2u3CLz5FCMXbdd_BDlINdsTcTXjlBxdyivkE8dacsStzTrDoGtbFvuYJLww75MlbQ2qp0y2F5KCorjTySv7jSDGO0q0HW4KG059wmhaS2ctU1_lOXuzIsVraJA6fBrOSMql54o3zx"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+<span class="absolute bottom-1 w-full text-center px-1 text-[9px] md:text-label-sm font-label-sm text-white truncate pointer-events-none">Elden Ring</span>
+</div>
+<!-- Item Card -->
+<div class="h-full aspect-square flex-shrink-0 relative rounded-md overflow-hidden bg-surface-container-highest cursor-grab hover:scale-105 hover:shadow-[0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-200 group/card border border-border-light/50">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A stunning wide shot of a futuristic cyberpunk city street during daytime, completely defying the usual dark neon trope. Bright, clean light mode aesthetic with sleek white skyscrapers, subtle holographic advertisements in pastel blues and pinks, and highly detailed futuristic vehicles. Clear blue sky, pristine environment, architectural rendering style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeuNof2Vm-XgCltstcaSsG0hUN-J-fh6JtqTcRUuiUyq2OA84c7MfnEwC5blOT8UvI4KqxPWlZffcQHB2NYqbg--2pBnb39hNIsOEJI5b_-s19gv4ZitK1jvW9y5lJBI5Kg0yXE5BtI5owqpPwzF9vxUIMwDF7pFS55qXn5JeW_vIzoeLxQIV5IOmkio3P8E_hY0BAMkXg18cn3Rik2l6s_nO9zxqIgSyT5EfM2jn9bO-VVg5tZGBcnV73hT1kRrDnrYe0VKFRkRbG"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+<span class="absolute bottom-1 w-full text-center px-1 text-[9px] md:text-label-sm font-label-sm text-white truncate pointer-events-none">Cyberpunk</span>
+</div>
+</div>
+</div>
+<!-- Tier A -->
+<div class="flex-[1_1_13%] flex flex-row items-stretch bg-glass-bg backdrop-blur-sm rounded-lg border border-border-light overflow-hidden shadow-sm group">
+<div class="w-16 md:w-24 flex-shrink-0 flex flex-col items-center justify-center font-tier-marker text-tier-marker text-on-primary bg-tier-a-crimson shadow-[inset_-1px_0_0_rgba(0,0,0,0.05)]">
+<span>A</span>
+<span class="text-[10px] md:text-label-sm font-label-sm font-medium tracking-normal mt-1 opacity-90">杀疯了</span>
+</div>
+<div class="flex-1 flex flex-row items-center gap-3 px-3 py-2 overflow-x-auto overflow-y-hidden no-scrollbar bg-tier-a-crimson/5">
+<!-- Item Card -->
+<div class="h-full aspect-square flex-shrink-0 relative rounded-md overflow-hidden bg-surface-container-highest cursor-grab hover:scale-105 hover:shadow-[0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-200 group/card border border-border-light/50">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A beautifully stylized, minimalist digital illustration of a solitary figure standing before a massive, glowing white portal in a snowy landscape. The scene is brightly lit, emphasizing negative space and crisp whites, with subtle shadows in cool blue tones. High-end indie game aesthetic, serene and mysterious atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtZpOjArd261mgvqWekSFc2uS1QQeWAREjF1YFG4uN7-ViHHyRm9Cdl2xJvR32UPDrSTfeuevihLBhg6TvEz9FZ5JBFDxScQskEPXAKGubX_DcTadnkE3ppO_y3lrY89gglr2IBYvMmB0BmTY_PMtIoujJafDq1GRbm8oebrqtfpQkikS4KtYyFVU4zfzv_AvWLRxGzxkzdvDLVxFI3eadLOJ_-Q4vkkbqJJp82n3I5y3jLSp4Qk1f_0Jf71GtgKLRXyaYXOgN9YVF"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+<span class="absolute bottom-1 w-full text-center px-1 text-[9px] md:text-label-sm font-label-sm text-white truncate pointer-events-none">Journey</span>
+</div>
+</div>
+</div>
+<!-- Tier B -->
+<div class="flex-[1_1_13%] flex flex-row items-stretch bg-glass-bg backdrop-blur-sm rounded-lg border border-border-light overflow-hidden shadow-sm group">
+<div class="w-16 md:w-24 flex-shrink-0 flex flex-col items-center justify-center font-tier-marker text-tier-marker text-on-primary bg-tier-b-electric-purple shadow-[inset_-1px_0_0_rgba(0,0,0,0.05)]">
+<span>B</span>
+<span class="text-[10px] md:text-label-sm font-label-sm font-medium tracking-normal mt-1 opacity-90">有点料</span>
+</div>
+<div class="flex-1 flex flex-row items-center gap-3 px-3 py-2 overflow-x-auto overflow-y-hidden no-scrollbar bg-tier-b-electric-purple/5">
+<!-- Drop Zone Empty State Indicator (Hidden by default, shown during drag) -->
+<div class="hidden w-full h-full rounded border-2 border-dashed border-tier-b-electric-purple/40 bg-tier-b-electric-purple/5 flex items-center justify-center text-tier-b-electric-purple transition-all duration-200">
+<span class="material-symbols-outlined">add_box</span>
+</div>
+</div>
+</div>
+<!-- Tier C -->
+<div class="flex-[1_1_13%] flex flex-row items-stretch bg-glass-bg backdrop-blur-sm rounded-lg border border-border-light overflow-hidden shadow-sm group">
+<div class="w-16 md:w-24 flex-shrink-0 flex flex-col items-center justify-center font-tier-marker text-tier-marker text-on-primary bg-tier-c-graphite shadow-[inset_-1px_0_0_rgba(0,0,0,0.05)]">
+<span>C</span>
+<span class="text-[10px] md:text-label-sm font-label-sm font-medium tracking-normal mt-1 opacity-90">还行吧</span>
+</div>
+<div class="flex-1 flex flex-row items-center gap-3 px-3 py-2 overflow-x-auto overflow-y-hidden no-scrollbar bg-tier-c-graphite/5">
+<!-- Item Card -->
+<div class="h-full aspect-square flex-shrink-0 relative rounded-md overflow-hidden bg-surface-container-highest cursor-grab hover:scale-105 hover:shadow-[0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-200 group/card border border-border-light/50">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A highly detailed macro photograph of a rusty, intricately designed metallic vault door set against a bright, sterile white laboratory background. The lighting is clinical and uniform, highlighting the textures of the distressed metal against the clean surroundings. Professional studio lighting, hyper-realistic, industrial sci-fi aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKqn0FRUap-QL2GmSSlElF1dz_iUaJwD3jBNA5Jz3Q1na6HBJJeV_M-EV0HhXgfP5k0wcVvqWk2OQMyyXvONiltkpadAdlErPVMg47S-IGfQKMHfxzf7NLvIFzZRkOsyo9-4E7pSvQlbjg6mWYzH1TCQwve-gbhNyTdycZ5F4Qd-Vjft_XLMznI1TDGeKcu-lTBGjQtqykY8ltXXJeySd0kFSEb4RqxCry1reNu7qRSzX6cK_hIi8hx0McMz2iXi4bwB2WbueHCjlh"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+<span class="absolute bottom-1 w-full text-center px-1 text-[9px] md:text-label-sm font-label-sm text-white truncate pointer-events-none">Fallout</span>
+</div>
+</div>
+</div>
+<!-- Tier D -->
+<div class="flex-[1_1_13%] flex flex-row items-stretch bg-glass-bg backdrop-blur-sm rounded-lg border border-border-light overflow-hidden shadow-sm group">
+<div class="w-16 md:w-24 flex-shrink-0 flex flex-col items-center justify-center font-tier-marker text-tier-marker text-on-surface bg-tier-d-soft-gray shadow-[inset_-1px_0_0_rgba(0,0,0,0.05)]">
+<span>D</span>
+<span class="text-[10px] md:text-label-sm font-label-sm font-medium tracking-normal mt-1 opacity-90">凑个数</span>
+</div>
+<div class="flex-1 flex flex-row items-center gap-3 px-3 py-2 overflow-x-auto overflow-y-hidden no-scrollbar bg-tier-d-soft-gray/10 relative">
+<!-- Explicit Empty State Layout -->
+<div class="absolute inset-3 rounded border-2 border-dashed border-tier-d-soft-gray/50 flex flex-col items-center justify-center text-on-surface-variant/50 pointer-events-none">
+<span class="material-symbols-outlined text-[24px] mb-1">drag_indicator</span>
+<span class="text-label-sm font-label-sm">Drag items here</span>
+</div>
+</div>
+</div>
+<!-- Unsorted / Pool -->
+<div class="flex-[1.5_1_20%] flex flex-col bg-surface-container-low rounded-lg border border-border-light overflow-hidden shadow-inner mt-2">
+<div class="h-8 md:h-10 bg-surface-variant/50 border-b border-light flex items-center px-4 gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">folder_open</span>
+<span class="text-label-sm font-label-sm font-semibold text-on-surface uppercase tracking-wider">🗂 待放置 (Unsorted)</span>
+<span class="ml-auto bg-surface-container-high text-on-surface-variant text-[10px] px-2 py-0.5 rounded-full border border-border-light">3 Items</span>
+</div>
+<div class="flex-1 flex flex-row flex-wrap content-start gap-3 p-4 overflow-y-auto no-scrollbar relative">
+<!-- Item Card -->
+<div class="w-[72px] h-[72px] md:w-24 md:h-24 flex-shrink-0 relative rounded-md overflow-hidden bg-surface-container-highest cursor-grab hover:scale-105 hover:shadow-[0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-200 group/card border border-border-light/50">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A vivid, high-contrast illustration of a red sports car drifting tightly around a neon-lit corner in a futuristic, pristine white megacity. The style is cel-shaded anime meets high-end 3D rendering. Light mode aesthetic dominates, with stark whites and vibrant pops of red and cyan. Dynamic motion blur, high energy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAo0XltjBcTWvKWgeHRNR9nvkSnW5Y5S-mXYeDxGXAIz2W2KRkP28Oddj3gqB43K8NuP7shx8ZiwKMsALCmsvw-gLIELS-8sakFKgU_bxjIkyOx7Gl1Jg3L3kn4fwspm3N9chLxDMCjzQoHEzuEdVBBU8F8aNj2sQOd3mVM2tP1zUE2VlGRYhdm4mmAmLUX5FwSAGVxOShAlyL9qd3HiC6tcYSDTNJ-8p8qms1WatEttsYwo1EOWl3ZBnl9caFXWos1N7YGyfNHFbkp"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+<span class="absolute bottom-1 w-full text-center px-1 text-[9px] md:text-label-sm font-label-sm text-white truncate pointer-events-none">NFS</span>
+</div>
+<!-- Item Card -->
+<div class="w-[72px] h-[72px] md:w-24 md:h-24 flex-shrink-0 relative rounded-md overflow-hidden bg-surface-container-highest cursor-grab hover:scale-105 hover:shadow-[0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-200 group/card border border-border-light/50">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A top-down isometric view of a cozy, detailed pixel art farm rendered in a modern 3D voxel style. Bright, sunny daylight setting with vibrant green crops, a crisp red barn, and rich brown soil. The aesthetic is clean, minimalist light mode, reminiscent of high-end casual simulation games. Soft, diffuse lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuADVqqQ-g2YaZ60j2cHgm6AvAmao8ceKnWFexwOpgxWKEbOVWzD9rjc2O7Roijo-7HTEBKJYRO9SMyzfgwS9XRe9y1kXj6H6wRJNlFaeNcChL3HHnd-v_0qYaU91DFabKFrGVhY7z4Lur84Uy22V2eRNkc8pab4EDsoA7v_N5rZvtFYHXRuaWXkvQ3VYdX1m9LaHvKQ5JPEw9E8dKhn1n4Zi85JblXht9HGDugYxDJlfA7zu4SrKP2ZDZEcpUcWmKBuC5bADqi5V8bJ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+<span class="absolute bottom-1 w-full text-center px-1 text-[9px] md:text-label-sm font-label-sm text-white truncate pointer-events-none">Stardew</span>
+</div>
+<!-- Item Card -->
+<div class="w-[72px] h-[72px] md:w-24 md:h-24 flex-shrink-0 relative rounded-md overflow-hidden bg-surface-container-highest cursor-grab hover:scale-105 hover:shadow-[0_4px_24px_rgba(0,0,0,0.15)] transition-all duration-200 group/card border border-border-light/50 opacity-60 hover:opacity-100">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="A striking portrait of an intimidating alien warrior in sleek, polished white armor standing against a completely blank white background. The armor features glowing blue energetic accents. The lighting is exceptionally bright and sterile, creating a high-fashion, minimalist sci-fi look. Extremely high resolution, hyper-detailed textures on the armor." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwkRHA4V0JoJiQVOOcwRknutJt9dYjz9WMKj3RlsXg8OJ6P2YpxY5Lx2RsVCsNRxGZetRy6HWgL3RfZNkIo16La0xE3yQq6dib07eXPEBGZ2sIaIJnuiLAV_bnJH-Q_hwUl0FYBZEcwc__ekAN8X3r-14OpVa5Mz-cjqVv1CbPVomozfLmT1sPl8aocn9phhUJrXaIVdxWCuOUn3QOu_sr82KiNwB6IFGnJzRVgVCiOvTS3sWC6lab4IRzhYx1SXnBpalOpBzD9ca3"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent pointer-events-none"></div>
+<span class="absolute bottom-1 w-full text-center px-1 text-[9px] md:text-label-sm font-label-sm text-white truncate pointer-events-none">Halo</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Status Bar -->
+<footer class="h-status-bar-height flex-shrink-0 bg-surface-variant flex items-center justify-between px-margin-edge border-t border-light relative z-50">
+<div class="flex items-center gap-2 text-on-surface-variant text-[11px] font-label-sm">
+<span class="material-symbols-outlined text-[14px]">info</span>
+<span>Drag items to reorder</span>
+</div>
+<div class="flex items-center gap-1.5 text-surface-tint text-label-sm font-label-sm font-medium bg-primary/10 px-2 py-0.5 rounded">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Saved</span>
+</div>
+</footer>
+</body></html>

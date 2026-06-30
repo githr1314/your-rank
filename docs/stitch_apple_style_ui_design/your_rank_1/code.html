@@ -1,0 +1,289 @@
+<!DOCTYPE html><html class="light" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>My Rankings - Your Rank</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1a1c1c",
+                        "outline-variant": "#c1c6d7",
+                        "surface": "#f9f9f9",
+                        "secondary-container": "#dfdfe1",
+                        "on-tertiary-fixed": "#1a1b1f",
+                        "surface-variant": "#e2e2e2",
+                        "tier-d-soft-gray": "#AEAEB2",
+                        "error-container": "#ffdad6",
+                        "tier-c-graphite": "#48484A",
+                        "on-tertiary-container": "#fefcff",
+                        "border-light": "rgba(0, 0, 0, 0.08)",
+                        "surface-tint": "#005bc1",
+                        "on-surface-variant": "#414755",
+                        "on-secondary-fixed-variant": "#454749",
+                        "primary-container": "#0070eb",
+                        "surface-container-low": "#f3f3f4",
+                        "surface-container": "#eeeeee",
+                        "on-primary-container": "#fefcff",
+                        "background": "#f9f9f9",
+                        "tertiary-container": "#747479",
+                        "tier-s-gradient": "linear-gradient(135deg, #FFD700 0%, #FF9500 100%)",
+                        "primary-fixed": "#d8e2ff",
+                        "secondary": "#5d5e60",
+                        "primary": "#0058bc",
+                        "outline": "#717786",
+                        "inverse-surface": "#2f3131",
+                        "tertiary-fixed-dim": "#c6c6cb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary": "#ffffff",
+                        "tertiary-fixed": "#e3e2e7",
+                        "surface-container-high": "#e8e8e8",
+                        "on-tertiary-fixed-variant": "#46464b",
+                        "error": "#ba1a1a",
+                        "background-secondary": "#F5F5F7",
+                        "surface-container-highest": "#e2e2e2",
+                        "inverse-on-surface": "#f0f1f1",
+                        "surface-dim": "#dadada",
+                        "tertiary": "#5b5c60",
+                        "primary-fixed-dim": "#adc6ff",
+                        "tier-a-crimson": "#FF3B30",
+                        "on-secondary": "#ffffff",
+                        "secondary-fixed-dim": "#c6c6c8",
+                        "on-secondary-fixed": "#1a1c1d",
+                        "secondary-fixed": "#e2e2e4",
+                        "on-surface": "#1a1c1c",
+                        "tier-b-electric-purple": "#AF52DE",
+                        "on-secondary-container": "#616365",
+                        "inverse-primary": "#adc6ff",
+                        "on-error": "#ffffff",
+                        "glass-bg": "rgba(255, 255, 255, 0.72)",
+                        "surface-bright": "#f9f9f9",
+                        "on-tertiary": "#ffffff",
+                        "on-primary-fixed": "#001a41",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#004493"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter-md": "16px",
+                        "stack-gap": "12px",
+                        "info-area-height": "80px",
+                        "status-bar-height": "32px",
+                        "margin-edge": "24px",
+                        "top-bar-height": "56px"
+                    },
+                    "fontFamily": {
+                        "headline-sm": ["Inter"],
+                        "tier-marker": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-sm": ["20px", { "lineHeight": "25px", "fontWeight": "600" }],
+                        "tier-marker": ["28px", { "lineHeight": "34px", "letterSpacing": "0.05em", "fontWeight": "800" }],
+                        "headline-md": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "body-lg": ["17px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "display-lg": ["34px", { "lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #f9f9f9; /* background */
+            color: #1a1c1c; /* on-background */
+        }
+        
+        .ambient-shadow-hover:hover {
+            box-shadow: 0 4px 24px rgba(0,0,0,0.04);
+            transform: scale(1.02);
+            transition: all 0.2s ease-out;
+            z-index: 10;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+        
+        .dashed-dropzone {
+            border: 1.5px dashed #AEAEB2;
+            background: transparent;
+            transition: background-color 0.2s;
+        }
+        .dashed-dropzone:hover {
+            background: rgba(0,0,0,0.02);
+        }
+        
+        /* Hide scrollbar for clean look */
+        ::-webkit-scrollbar {
+            width: 0px;
+            background: transparent;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden antialiased">
+<!-- SideNavBar (WEB ONLY) -->
+<nav class="fixed left-0 top-0 h-full w-64 hidden md:flex flex-col bg-surface border-r border-light py-gutter-md gap-stack-gap z-40">
+<!-- Header -->
+<div class="px-margin-edge mb-8">
+<h1 class="text-headline-md font-headline-md text-primary font-bold tracking-tight">Your Rank</h1>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1">Elite Tiering</p>
+</div>
+<!-- Navigation Links -->
+<div class="flex flex-col gap-2">
+<!-- Active: My Tiers maps to My Rankings -->
+<a class="flex items-center gap-3 bg-primary-container text-on-primary-container font-semibold rounded-lg mx-2 px-4 py-2 scale-[0.98] duration-150 group" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="text-body-md font-body-md">My Tiers</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container px-4 py-2 mx-2 rounded-lg hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="text-body-md font-body-md">Community</span>
+</a>
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container px-4 py-2 mx-2 rounded-lg hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">trending_up</span>
+<span class="text-body-md font-body-md">Trending</span>
+</a>
+
+</div>
+<div class="mt-auto mb-4">
+<a class="flex items-center gap-3 text-on-surface-variant hover:bg-surface-container px-4 py-2 mx-2 rounded-lg hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-body-md font-body-md">Settings</span>
+</a>
+</div>
+</nav>
+<!-- TopNavBar (MOBILE ONLY) -->
+<header class="fixed top-0 w-full z-50 bg-glass-bg backdrop-blur-md md:hidden flex justify-between items-center h-top-bar-height px-margin-edge border-b border-light flat no shadows">
+<h1 class="text-headline-md font-headline-md font-bold tracking-tight text-on-surface">Your Rank</h1>
+<div class="flex items-center gap-4 text-primary hover:bg-surface-variant/50 transition-colors opacity-80 duration-150">
+<span class="material-symbols-outlined text-headline-sm font-headline-sm cursor-pointer">account_circle</span>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 flex flex-col md:ml-64 w-full h-full overflow-y-auto pt-top-bar-height md:pt-0 pb-16 md:pb-0 relative">
+<!-- Header Section -->
+<div class="px-margin-edge py-8 sticky top-0 bg-background/90 backdrop-blur-md z-30 border-b border-light">
+<h2 class="text-display-lg font-display-lg text-on-surface">My Rankings</h2>
+<p class="text-body-lg font-body-lg text-on-surface-variant mt-2 max-w-2xl">Manage and organize your personal tier lists.</p>
+</div>
+<!-- Content Grid -->
+<div class="px-margin-edge py-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Create New Card -->
+<button class="dashed-dropzone rounded-xl flex flex-col items-center justify-center min-h-[240px] gap-4 group cursor-pointer w-full text-left">
+<div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-3xl text-tertiary group-hover:text-on-primary-container transition-colors">add</span>
+</div>
+<span class="text-headline-sm font-headline-sm text-tertiary group-hover:text-primary transition-colors">Create New Ranking</span>
+</button>
+<!-- Ranking Card 1 -->
+<div class="glass-panel rounded-xl overflow-hidden ambient-shadow-hover flex flex-col min-h-[240px] relative cursor-pointer">
+<div class="h-32 w-full bg-surface-container-high relative">
+<div class="bg-cover bg-center w-full h-full" data-alt="A sleek, modern high-end smartphone lying on a minimalist white desk, bathed in soft, bright studio lighting. The image should convey a premium, light-mode aesthetic with clean lines, subtle shadows, and a sophisticated technological vibe, reflecting a high-quality product review context." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuALdb34PAB6PchkBQWcxBD75_ix0E4wSPKZMIeZGwCC_VMzTErcjq2A09iMRCPPPnNNLOw5RqEj7QhhdtlV7jwXGK5pfQ05F8qVFLYSWxrhOttoaYGkNc7VcZfB7Rl7vukH7S5-0dZ70p8ZXONBEF8tBAPkA9tE00m4crvE_GeQdnsQGEczUlisq3X5z776h0Z-Ne1uMLkfXaoe5XhODnHNM_SqEencTTV5S6S24t1TEOAdNcDSlu6j5hGOBo2bxulGg8Asg5NRTJko')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute top-3 right-3 px-2 py-1 bg-surface-container-lowest/80 backdrop-blur-sm rounded text-label-sm font-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">public</span> Public
+                        </div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between bg-surface-container-lowest">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface line-clamp-1">2024 Flagship Smartphones</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1 line-clamp-2">Comprehensive tier list of this year's top mobile devices based on performance, camera, and value.</p>
+</div>
+<div class="mt-4 flex items-center justify-between text-label-sm font-label-sm text-tertiary">
+<span class="">Updated 2 days ago</span>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-1 rounded">
+<span class="w-2 h-2 rounded-full" style="background: linear-gradient(135deg, #FFD700 0%, #FF9500 100%);"></span>
+<span class="">12 Items</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ranking Card 2 -->
+<div class="glass-panel rounded-xl overflow-hidden ambient-shadow-hover flex flex-col min-h-[240px] relative cursor-pointer">
+<div class="h-32 w-full bg-surface-container-high relative">
+<div class="bg-cover bg-center w-full h-full" data-alt="A collection of classic science fiction paperback books stacked neatly on a sleek, light grey shelf. The scene is illuminated by crisp, natural light that highlights the vibrant covers against a predominantly white and neutral background. The aesthetic is clean, intellectual, and modern, fitting a high-end organizational tool." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD-MLhhKT081KFjSa2ciZrArMhIy3sWFZ_QmAX4HM6yAIHOA2Mr8wLQ6KYro_yxNpRQaqTyg5r2UNlOrvdjLSS9S3m26wQQlyUGoqkfLAiJGgPhiGg1PP5pIT4wzXShd7qvcpRZ4JijMafKRnWLjXmt2y3GBN1Ek0dMy0Q4GA5PF5_LT_M1V9MvGIidobTuref5OB4jJjBGaLkO9xfqvCSjs4jul2hQVbLFlDn7n1fUCChC8Z7UenQBAGgWw-tdDreNMh38DoKJJFJY')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute top-3 right-3 px-2 py-1 bg-surface-container-lowest/80 backdrop-blur-sm rounded text-label-sm font-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">lock</span> Private
+                        </div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between bg-surface-container-lowest">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface line-clamp-1">Sci-Fi Novels</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1 line-clamp-2">Personal ranking of classic and contemporary science fiction literature.</p>
+</div>
+<div class="mt-4 flex items-center justify-between text-label-sm font-label-sm text-tertiary">
+<span class="">Updated 1 week ago</span>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-1 rounded">
+<span class="w-2 h-2 rounded-full bg-tier-b-electric-purple"></span>
+<span class="">45 Items</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Ranking Card 3 -->
+<div class="glass-panel rounded-xl overflow-hidden ambient-shadow-hover flex flex-col min-h-[240px] relative cursor-pointer">
+<div class="h-32 w-full bg-surface-container-high relative">
+<div class="bg-cover bg-center w-full h-full" data-alt="A minimalist, top-down view of various gourmet coffee beans scattered elegantly on a pristine white marble surface. Soft, diffused lighting creates gentle shadows, emphasizing the rich textures of the beans. The overall mood is sophisticated, bright, and clean, perfectly suited for a premium digital ranking application." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAz-Am_noB43QXkkGqYJedg1Zu0MRVBVG7fTmNQamkm2ocUxTydJas5y6WEAsTVI6kd0zZObLb_xZWLiyhznmj6FAcDysXdorq96b9tVGn9QK8j4WTUawugqX-HY8jF7knaUNl3VLI176szgB_0biACvHyD8Mi9QW8uneSlIbocrv1yGhT5jelcNmDHFbbKFsTcuv0SAtg5U8myDNtCRC8C8HdHysggek5S3ypu2m-MYMx1jaANINdKoT2suKaIksHtpBoOgZOuLA_o')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+<div class="absolute top-3 right-3 px-2 py-1 bg-surface-container-lowest/80 backdrop-blur-sm rounded text-label-sm font-label-sm text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">public</span> Public
+                        </div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between bg-surface-container-lowest">
+<div>
+<h3 class="text-headline-sm font-headline-sm text-on-surface line-clamp-1">Local Coffee Roasters</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1 line-clamp-2">Ranking the best specialty coffee beans available in the downtown area.</p>
+</div>
+<div class="mt-4 flex items-center justify-between text-label-sm font-label-sm text-tertiary">
+<span class="">Updated 1 month ago</span>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-1 rounded">
+<span class="w-2 h-2 rounded-full bg-tier-a-crimson"></span>
+<span class="">8 Items</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (MOBILE ONLY) -->
+<nav class="fixed bottom-0 w-full z-50 bg-glass-bg backdrop-blur-md flex justify-around items-center h-16 px-gutter-md md:hidden border-t border-light flat no shadows">
+<!-- Active: Rankings maps to Rankings tab -->
+<a class="flex flex-col items-center justify-center text-primary font-bold hover:text-primary transition-all scale-95 duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">reorder</span>
+<span class="text-label-sm font-label-sm mt-1">Rankings</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">explore</span>
+<span class="text-label-sm font-label-sm mt-1">Discover</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined">add_box</span>
+<span class="text-label-sm font-label-sm mt-1">Create</span>
+</a>
+</nav>
+
+
+</body></html>
